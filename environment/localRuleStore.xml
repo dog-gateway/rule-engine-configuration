@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dogrules:ruleList xsi:schemaLocation="http://elite.polito.it/domotics/dog/rules/rule_definition rule_definition.xsd " xmlns:dogrules="http://elite.polito.it/domotics/dog/rules/rule_definition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+	<!-- disconnect when consumption Too High -->
+	<dogrules:rule name="consumptionTooHigh">
+        <dogrules:if>
+            <dogrules:event>
+                <dogrules:notification name="newActivePowerValue" class="SinglePhaseActivePowerMeasurementNotification" fromDevice="MeteringPowerOutlet"/>
+            </dogrules:event>
+            <dogrules:when>
+                <dogrules:state class="SinglePhaseActivePowerMeasurementState" ofDevice="MeteringPowerOutlet" value="50.0" evaluator="&gt;"/>
+            </dogrules:when>
+        </dogrules:if>
+        <dogrules:then>
+            <dogrules:action>
+                <dogrules:command name="off" class="OnOffFunctionality" toDevice="MeteringPowerOutlet"/>
+            </dogrules:action>
+        </dogrules:then>
+    </dogrules:rule>
+	
+	<!-- disconnect for 2 min when consumption is too high -->
+    <dogrules:rule name="temporaryDisconnection">
+        <dogrules:if>
+            <dogrules:event>
+                <dogrules:notification name="newActivePowerValue" class="SinglePhaseActivePowerMeasurementNotification" fromDevice="SmartEnergySwitch"/>
+            </dogrules:event>
+            <dogrules:when>
+                <dogrules:state class="SinglePhaseActivePowerMeasurementState" ofDevice="SmartEnergySwitch" value="50.0" evaluator="&gt;"/>
+            </dogrules:when>
+        </dogrules:if>
+        <dogrules:then>
+            <dogrules:action>
+                <dogrules:command name="off" class="OnOffFunctionality" toDevice="SmartEnergySwitch"/>
+            </dogrules:action>
+        </dogrules:then>
+    </dogrules:rule>
+    
+    <!-- switch on the lamp when the plug is on -->
+	<dogrules:rule name="OnToOn">
+        <dogrules:if>
+            <dogrules:event>
+                <dogrules:notification name="stateChanged" class="StateChangeNotification" fromDevice="SmartEnergySwitch">
+                	<dogrules:param type="OnOffState" value="on" name="newState"/>
+                </dogrules:notification>
+            </dogrules:event>
+        </dogrules:if>
+        <dogrules:then>
+            <dogrules:action>
+                <dogrules:command name="on" class="OnOffFunctionality" toDevice="Lamp_Holder"/>
+            </dogrules:action>
+        </dogrules:then>
+    </dogrules:rule>
+    
+    <!-- switch on the lamp when the plug is on -->
+	<dogrules:rule name="OffToOff">
+        <dogrules:if>
+            <dogrules:event>
+                <dogrules:notification name="stateChanged" class="StateChangeNotification" fromDevice="SmartEnergySwitch">
+                	<dogrules:param type="OnOffState" value="off" name="newState"/>
+                </dogrules:notification>
+            </dogrules:event>
+        </dogrules:if>
+        <dogrules:then>
+            <dogrules:action>
+                <dogrules:command name="off" class="OnOffFunctionality" toDevice="Lamp_Holder"/>
+            </dogrules:action>
+        </dogrules:then>
+    </dogrules:rule>
+</dogrules:ruleList>
